@@ -26,11 +26,14 @@ for i in range(len(dcm_path_dicom)):
     dcm = dicom.read_file(dcm_path_dicom[i])
     img_origin = dcm.pixel_array * dcm.RescaleSlope + dcm.RescaleIntercept
 
+    # plt.imsave('0.jpg', img_origin,cmap='Greys_r')
+
     # 拿到 提取轮廓的窗，并规范化
     img_extract = (img_origin - (WL_extract - WW_extract / 2)) / WW_extract * 255  # 规范化到0-255
     # 下界0，上界255
     img_extract = np.clip(img_extract, 0, 255)
 
+    # plt.imsave('1.jpg', img_extract, cmap='Greys_r')
 
     dicom_np = np.uint8(img_extract)   # uint8	无符号整数（0 到 255）
     ret, img = cv2.threshold(dicom_np, 90, 255, cv2.THRESH_BINARY)  # 二值化
@@ -54,6 +57,7 @@ for i in range(len(dcm_path_dicom)):
     max_contours_mask = np.zeros((img_origin.shape))
     cv2.fillConvexPoly(max_contours_mask,contours[area_index[iii]], 1) # 1 为填充值
 
+    # plt.imsave('2.jpg', max_contours_mask, cmap='Greys_r')
 
     # 拿到 腹窗范围且 仅有中间轮廓的图像
     img_abdoment = (img_origin - (WL_abdoment - WW_abdoment / 2)) / WW_abdoment * 255  # 规范化到0-255
@@ -62,11 +66,15 @@ for i in range(len(dcm_path_dicom)):
 
     img_result=img_abdoment*max_contours_mask
 
+    # plt.imsave('3.jpg', img_result, cmap='Greys_r')
+    # plt.imsave('4.jpg', img_abdoment, cmap='Greys_r')
+
     # # 保存 可视化
     # plt.imsave(save_dir + str(i+10000) + '_result.jpg', img_result,cmap='Greys_r')
 
     #保存为 npy文件
-    np.save(save_numpy_dir+str(i+10000)+'_result.npy',img_result)
+    # np.save(save_numpy_dir+str(i+10000)+'_result.npy',img_result)
+
 
 
 

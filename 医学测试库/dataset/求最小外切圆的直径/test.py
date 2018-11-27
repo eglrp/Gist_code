@@ -45,17 +45,33 @@ dst222 = np.uint8(dst222)
 im22, contours2, _ = cv2.findContours(dst222, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)  # 查找轮廓
 
 
-# 画出所有的外切圆
-for i in range(len(contours2)):
-    (x, y), radius = cv2.minEnclosingCircle(contours2[i])
-    center = (int(x), int(y))
-    radius = int(radius)  # 半径(x,y),radius =cv2.minEnclosingCircle(contours2[0])
-    cv2.circle(dst222, center, radius, (255, 0, 0), 2)
+# # 画出所有的外切圆
+# for i in range(len(contours2)):
+#     (x, y), radius = cv2.minEnclosingCircle(contours2[i])
+#     center = (int(x), int(y))
+#     radius = int(radius)  # 半径(x,y),radius =cv2.minEnclosingCircle(contours2[0])
+#     cv2.circle(dst222, center, radius, (255, 0, 0), 2)
+#
+#
+#
+# cv2.imshow('a',dst222)
+# cv2.waitKey(0)
+plt.subplot(1, 2,1)
+plt.title('mask')
+plt.imshow(dst222, cmap='Greys_r')  # mask
 
 
+from skimage.measure import label, regionprops
+lablel_mask=label(dst222)
+props = regionprops(lablel_mask)  # 求外接矩形
+for prop in props:
+        # 输入参数分别为图像、左上角坐标、右下角坐标、颜色数组、粗细
+        cv2.rectangle(im2, (prop.bbox[1], prop.bbox[0]), (prop.bbox[3], prop.bbox[2]), (255, 0, 0), 2)
 
-cv2.imshow('a',dst222)
-cv2.waitKey(0)
+plt.subplot(1, 2, 2)
+plt.title('bounding box')
+plt.imshow(im2, cmap='Greys_r')  # mask
+plt.show()
 print()
 
 
