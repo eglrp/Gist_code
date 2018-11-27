@@ -95,7 +95,7 @@ for i in range(len(dcm_path)):
             (x, y), radius = cv2.minEnclosingCircle(contours2[i_5])
             center = (int(x), int(y))
             radius = int(radius)  # 半径，单位mm    int()向下取整，只取整数位
-            if not (radius > 15 or radius < 1):  # 半径范围  决定===========直径为3~30===============================================================
+            if not (radius > 20 or radius < 1):  # 半径范围  决定===========直径为3~40===============================================================
                 save_contours.append(contours2[i_5]) # 保存符合条件的轮廓
 
         # 产生符合条件的 mask  0-1
