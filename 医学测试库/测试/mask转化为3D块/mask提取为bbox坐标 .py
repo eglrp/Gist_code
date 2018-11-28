@@ -8,7 +8,7 @@ from matplotlib import cm
 from skimage.measure import label, regionprops
 import os
 '''
-mask提取为3D块    调节直径范围以 保证框住所有的淋巴结
+mask提取为 bbox坐标    调节直径范围以 保证框住所有的淋巴结
 '''
 #######################################################################
 WL_extract,WW_extract=-360,446   # 提取轮廓的窗宽 窗位
