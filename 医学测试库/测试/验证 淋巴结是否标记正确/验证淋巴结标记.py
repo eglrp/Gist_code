@@ -5,7 +5,8 @@ import numpy as np
 import cv2
 import os
 '''
-验证前4条数据没问题， 所有标注淋巴结未验证
+二维平面上框住淋巴结。验证前4条数据没问题， 所有标注淋巴结未验证
+
 '''
 # 读取csv至字典
 csvFile = open("node_mark.csv", "r")
@@ -83,7 +84,6 @@ for i in range(len(dcm_path_dicom)):
             # plt.show()
 
             cv2.rectangle(img_abdoment, ( x_min,y_min), ( x_max,y_max), (255, 255, 255), 1)
-            # 判断
             if not os.path.exists('/home/bobo/data/test/test004/'+str(i)+'/'+str(ii)):
                 os.makedirs('/home/bobo/data/test/test004/'+str(i)+'/'+str(ii))
             # a/b/c   a 病例序号  b 淋巴结序号  c 该淋巴结所有图像
