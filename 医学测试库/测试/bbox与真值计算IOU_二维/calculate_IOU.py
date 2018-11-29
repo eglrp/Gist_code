@@ -1,8 +1,8 @@
 # coding=utf-8
 import pandas as pd
-import os
 import numpy as np
-from node_IOU.IOU import Judge_Much_IOU
+from IOU import Judge_Much_IOU
+
 
 csv_dir = './node_mark.csv'
 txt_dir = './bounding_box.txt'
