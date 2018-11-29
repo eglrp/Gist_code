@@ -84,7 +84,7 @@ def MergeBbox(i,j,distance,distance_threshold,flag):
 
     # 对应flag位置从0置为1
     if flag[i][j] == 1:
-        print('合并出错1111')
+        print('合并出错1')
     else:
         flag[i][j] == 1
 
@@ -97,7 +97,7 @@ def MergeBbox(i,j,distance,distance_threshold,flag):
 
             # 对应flag位置从0置为1
             if flag[i_2_MergeBbox][index] == 1:
-                print('合并出错22222')
+                print('合并出错2')
             else:
                 flag[i_2_MergeBbox][index] == 1
 
