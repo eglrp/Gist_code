@@ -105,11 +105,42 @@ def MergeBbox(i,j,distance,distance_threshold,flag):
     return result_MergeBbox,flag
 
 
-def transform(merge_result,coordinate_list_fixed):
+def transform(merge_result,coordinate_list_grouping):
     '''
-    将合并结果转化为3D坐标
+    合并为3D坐标
     '''
-    print()
+
+    # 一个bbox无法在3D上合并,过滤掉
+    count_transform = 0
+    for i_transform in merge_result:
+        count_transform = count_transform+sum(i_transform)
+    if count_transform == 1:
+        # 过滤
+        return 0
+    else:
+        # 合并为3D坐标
+
+        # 先取出每行中对应的坐标
+        temp_transform=[]
+        temo_index_transform=[]
+        for i_transform in range(len(merge_result)): # 序号
+            if sum(merge_result[i_transform]) == 0:
+                temp_transform.append([0,0,0,0])
+            else:
+                temp_transform.append(coordinate_list_grouping[i_transform][merge_result[i_transform].index(1)])
+                temo_index_transform.append(i_transform)
+        # 转为 3D坐标
+        z_min,z_max = temo_index_transform[0],temo_index_transform[-1]
+
+        temp_2_transform=np.array(temp_transform[z_min:z_max+1])
+        x_min=np.min(temp_2_transform[:, 0])
+        y_min = np.min(temp_2_transform[:, 1])
+        x_max = np.max(temp_2_transform[:, 2])
+        y_max = np.max(temp_2_transform[:, 3])
+        return [x_min,y_min,z_min,x_max,y_max,z_max]
+
+
+
 
 def test():
     ##########################################################################
@@ -162,10 +193,12 @@ def test():
 
                 # 将合并结果转化为3D坐标
                 node_3d = transform(merge_result,coordinate_list_grouping)
-
-
-                # 保存淋巴结3D坐标
-                node_result.append(node_3d)
+                if node_3d == 0:
+                    # 一个bbox无法在3D上合并,过滤掉
+                    pass
+                else:
+                    # 保存淋巴结3D坐标
+                    node_result.append(node_3d)
     return node_result
 if __name__ == '__main__':
     test()
