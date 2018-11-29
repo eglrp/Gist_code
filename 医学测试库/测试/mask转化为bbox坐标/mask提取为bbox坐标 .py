@@ -19,6 +19,8 @@ save_test_dir='/home/bobo/data/test/test005/'
 
 bbox_txt='bounding_box.txt'
 
+expand_len = 6 # bbox扩大长度（上下左右都扩充6）
+
 #######################################################################
 
 # 读取dcm
@@ -96,7 +98,7 @@ for i in range(len(dcm_path)):
             (x, y), radius = cv2.minEnclosingCircle(contours2[i_5])
             center = (int(x), int(y))
             radius = int(radius)  # 半径，单位mm    int()向下取整，只取整数位
-            if not (radius > 20 or radius < 1):  # 半径范围  决定===========直径为3~40===============================================================
+            if radius < 60:  # 半径范围  决定===========直径为3~40===============================================================
                 save_contours.append(contours2[i_5]) # 保存符合条件的轮廓
 
         # 产生符合条件的 mask  0-1
@@ -114,14 +116,14 @@ for i in range(len(dcm_path)):
         txt_file.write(str(i_2) + ',')
         for prop in props:
             # 保存 bbox坐标(左上角坐标、右下角坐标)，与 标注信息 作对比
-            txt_file.write(str(prop.bbox[1]) + ',' + str(prop.bbox[0]) + ',' + str(prop.bbox[3]) + ',' + str(prop.bbox[2]) + ',')
+            txt_file.write(str(prop.bbox[1]-expand_len) + ',' + str(prop.bbox[0]-expand_len) + ',' + str(prop.bbox[3]+expand_len) + ',' + str(prop.bbox[2]+expand_len) + ',')
 
-            # # 输入参数分别为图像、左上角坐标、右下角坐标、颜色数组、粗细
-            # cv2.rectangle(result, (prop.bbox[1], prop.bbox[0]), (prop.bbox[3], prop.bbox[2]), (255, 0, 0), 1)
+            # 输入参数分别为图像、左上角坐标、右下角坐标、颜色数组、粗细
+            cv2.rectangle(result, (prop.bbox[1]-expand_len, prop.bbox[0]-expand_len), (prop.bbox[3]+expand_len, prop.bbox[2]+expand_len), (255, 0, 0), 1)
 
-        # if not os.path.exists(save_test_dir + str(i) ):
-        #     os.makedirs(save_test_dir + str(i) )
-        # plt.imsave(save_test_dir + str(i) + '/' + str(i_2)+'_' + 'result.jpg', result, cmap=cm.gray) #  仅有中间轮廓、且去掉肌肉的 且 过滤后存在bbox 的淋巴结范围的图像
+        if not os.path.exists(save_test_dir + str(i) ):
+            os.makedirs(save_test_dir + str(i) )
+        plt.imsave(save_test_dir + str(i) + '/' + str(i_2)+'_' + 'result.jpg', result, cmap=cm.gray) #  仅有中间轮廓、且去掉肌肉的 且 过滤后存在bbox 的淋巴结范围的图像
 
 
         # props即为 所求bbox。  判断是否框住 真实淋巴结
