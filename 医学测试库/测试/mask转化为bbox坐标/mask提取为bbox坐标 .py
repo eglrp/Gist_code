@@ -19,11 +19,11 @@ save_test_dir='/home/bobo/data/test/test005/'
 
 bbox_txt='bounding_box.txt'
 
-expand_len = 6 # bbox扩大长度（上下左右都扩充6）
+expand_len = 12 # bbox扩大(导致 长宽都扩大 expand_len mm)  选12是因为在4组里面 11是最长轴
 
-radius_opt = 20 # 最小外接圆半径以内
+radius_opt = 20 # 最小外接圆半径以内的轮廓 转为 bbox
 #######################################################################
-
+expand_len = int(expand_len /2)
 # 读取dcm
 dcm_path = gb.glob(dataset_path + 'dcm/*')
 dcm_path.sort()  # 排序

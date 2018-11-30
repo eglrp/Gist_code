@@ -87,7 +87,7 @@ def calculate():
             # 利用该类计算所有符合条件的IOU的累加
             sum += Judge_Much_IOU.judge_much_IOU(bbox_line_list, csv_bbox_list)
             # print(" total: ", total, " sum: ", sum, " PA: ", PA - 1, " frame: ", i)
-    print('finish and the recall is {0},sum is {1},total is {2}'.format((sum / total), sum, total))
+    print('finish and the recall is {0},sum is {1},total is {2},not detected is {3}'.format((sum / total), sum, total,(total-sum)))
 
 
 if __name__ == '__main__':
