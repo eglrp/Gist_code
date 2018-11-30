@@ -6,7 +6,7 @@ class getRecall():
     两组序列必须相同
     '''
 
-    def __init__(self,predict_3D,truth_3D):
+    def __init__(self,predict_3D=0,truth_3D=0):
         self.predict_3D = predict_3D
         self.truth_3D = truth_3D
 
@@ -36,7 +36,7 @@ class getRecall():
             # 遍历 预测淋巴结，只要IOU匹配，则停止遍历，并将对应标志位置为1
             for single_predict_3D_coordinate in single_predict_3D:
 
-                if self.iou_3d_cal(single_truth_3D[i],single_predict_3D_coordinate) > opt.threshold_3d_iou:
+                if self.iou_3d_cal(single_truth_3D[i],single_predict_3D_coordinate) >= opt.threshold_3d_iou:
                     # 认定框住
                     flag_single_cal[i] = 1
                     break
@@ -67,7 +67,7 @@ class getRecall():
                 overlap_area_list.append(overlap_area)
 
         Inter_AB = sum(overlap_area_list)  # 交集体积
-        Union_AB = A_volume + B_volume - Inter_AB
+        Union_AB =  A_volume               # A_volume 真值体积
 
         return Inter_AB / (Union_AB + 0.0001)   # 防止 除数为0
 
@@ -85,8 +85,6 @@ class getRecall():
             print('box_one 坐标有问题===============')
         if xmax < xmin or ymax < ymin:
             print('box_two 坐标有问题===============')
-
-
 
         one_x, one_y, one_w, one_h = int((xmin_ + xmax_) / 2), int((ymin_ + ymax_) / 2), xmax_ - xmin_, ymax_ - ymin_
         two_x, two_y, two_w, two_h = int((xmin + xmax) / 2), int((ymin + ymax) / 2), xmax - xmin, ymax - ymin
