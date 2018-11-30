@@ -21,6 +21,7 @@ bbox_txt='bounding_box.txt'
 
 expand_len = 6 # bbox扩大长度（上下左右都扩充6）
 
+radius_opt = 20 # 最小外接圆半径以内
 #######################################################################
 
 # 读取dcm
@@ -33,7 +34,7 @@ mask_path.sort()  # 排序
 
 # 将坐标写入txt
 txt_file=open(bbox_txt,'w')
-txt_file.write('第几张，x_min,y_min,x_max,y_max\n')
+txt_file.write('index_sequence，x_min,y_min,x_max,y_max\n')
 
 # 遍历每个病例
 for i in range(len(dcm_path)):
@@ -98,7 +99,7 @@ for i in range(len(dcm_path)):
             (x, y), radius = cv2.minEnclosingCircle(contours2[i_5])
             center = (int(x), int(y))
             radius = int(radius)  # 半径，单位mm    int()向下取整，只取整数位
-            if radius < 60:  # 半径范围  决定===========直径为3~40===============================================================
+            if radius < radius_opt:  # 半径范围  决定===========直径为3~40===============================================================
                 save_contours.append(contours2[i_5]) # 保存符合条件的轮廓
 
         # 产生符合条件的 mask  0-1

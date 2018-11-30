@@ -73,7 +73,7 @@ def calculate():
     node_csv = load_csv(csv_dir)
     PA, sum, total = 1, 0, 0
     print('start calculate IOU\nnow is PA1')
-    for line in range(len(node_csv)):
+    for line in range(lenjudge_much_IOU(node_csv)):
         if node_csv.PA[line] != PA:
             PA += 1
             print('now is PA{}'.format(PA))
