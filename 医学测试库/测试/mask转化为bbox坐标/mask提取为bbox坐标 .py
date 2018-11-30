@@ -21,7 +21,7 @@ bbox_txt='bounding_box.txt'
 
 expand_len = 12 # bbox扩大(导致 长宽都扩大 expand_len mm)  选12是因为在4组里面 11是最长轴
 
-radius_opt = 20 # 最小外接圆半径以内的轮廓 转为 bbox
+radius_opt = 40 # 最小外接圆半径以内的轮廓 转为 bbox
 #######################################################################
 expand_len = int(expand_len /2)
 # 读取dcm
@@ -59,8 +59,8 @@ for i in range(len(dcm_path)):
         # 查找 最中心的轮廓   条件：按照面积从大到小的轮廓中查找，当中心店位于该轮廓内部即为所求
         area_list = []  # 保存 每个轮廓面积
         # distance_list=[] # 保存 每个轮廓 是否包含某点
-        for i_3 in range(len(contours)):
-            area_list.append(cv2.contourArea(contours[i_3]))  # 计算面积
+        for i_contours in contours:
+            area_list.append(cv2.contourArea(i_contours))  # 计算面积
         area_index = np.argsort(-np.array(area_list))  # 面积从大到小 的下标值
         for i_4 in range(len(area_index)):
             if 1.0 == cv2.pointPolygonTest(contours[area_index[i_4]], (256, 256), False):
@@ -95,17 +95,20 @@ for i in range(len(dcm_path)):
 
         save_contours=[]
         # 画出所有的外切圆
-        for i_5 in range(len(contours2)):
-            (x, y), radius = cv2.minEnclosingCircle(contours2[i_5])
+        for i_contours2 in contours2:
+            (x, y), radius = cv2.minEnclosingCircle(i_contours2)
             center = (int(x), int(y))
             radius = int(radius)  # 半径，单位mm    int()向下取整，只取整数位
-            if radius < radius_opt:  # 半径范围  决定===========直径为3~40===============================================================
-                save_contours.append(contours2[i_5]) # 保存符合条件的轮廓
+            if radius < radius_opt:  # 半径范围
+                save_contours.append(i_contours2) # 保存符合条件的轮廓
 
         # 产生符合条件的 mask  0-1
         result_contours_mask = np.zeros((img_origin.shape))
-        for i_6 in range(len(save_contours)):
-            cv2.fillConvexPoly(result_contours_mask,save_contours[i_6], 1)  # 1 为填充值
+
+        for i_save_contours in save_contours:
+            cv2.fillConvexPoly(result_contours_mask,i_save_contours, 1)  # 1 为填充值
+
+
 
         # plt.imsave(save_test_dir + str(i)+'_'+str(i_2) + 'result2.jpg', result_contours_mask, cmap=cm.gray) # 保留一定范围的轮廓
 
