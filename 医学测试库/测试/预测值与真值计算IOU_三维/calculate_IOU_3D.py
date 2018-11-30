@@ -19,14 +19,17 @@ def test():
     # print(value)
 
     # 制作数据集
-    # 保存 3D坐标
-    np.save('all_predict_3d_coordinate.npy', predict_3D)
-    np.save('all_truth_3d_coordinate.npy', truth_3D)
 
     # 保存 预测3D块 对应标签
     # 标准 : 当预测3D块 与真值 立体IOU>0.5，则认定为1
     predict_label = getPredictLabel(predict_3D, truth_3D).gruop_cal()
-    np.save('predict_label.npy', predict_label)
+
+    predict_info=[predict_3D,predict_label]
+    # 保存 3D坐标
+    np.save('all_predict_info.npy', predict_info)
+    np.save('all_truth_3d_coordinate.npy', truth_3D)
+
+
 
 
 if __name__ == '__main__':
