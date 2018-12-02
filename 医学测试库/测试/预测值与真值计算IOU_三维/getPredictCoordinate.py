@@ -11,7 +11,7 @@ class getPredictCoordinate():
     def get_3d_coordinate(self):
 
         # 按照序列划分
-        group_list=self.load_txt()
+        group_list = self.load_txt()
 
         result=[]
         for single_list in group_list:
@@ -73,7 +73,7 @@ class get_single_sequence():
                     # 已使用，查看下一个框
                     continue
                 else:
-                    # 未使用,计算 其 与 flag中 未用过的所有bbox的距离
+                    # 未使用,计算 其 与 flag中下一行所有bbox的距离
 
                     # 当前bbox
                     current_bbox = coordinate_list[i][j * 4:j * 4 + 4]
@@ -155,11 +155,11 @@ class get_single_sequence():
 
     def MergeBbox(self,i, j, distance, distance_threshold, flag):
         '''
-        合并bbox,之后将 使用的bbox 在flag对应位置标注为 已使用
+        合并bbox,之后  仅将 自身的bbox  在flag对应位置标注为 已使用
         i，j:当前第i张的第j个bbox需要合并
-        distance：该bbox与 所有未使用的bbox之间的距离
+        distance：该bbox与 下一行开始的所有bbox之间的距离
         distance_threshold：距离合并的阈值
-        flag：确定合并bbox将 对应位置的flag置为1，即bbox标为已使用
+        flag：确定合并bbox将 自身bbox对应位置的flag置为1，即bbox标为已使用
 
         return:
                 merge_result 形状与distance相同，仅有0、1值（1代表合并）
@@ -175,7 +175,7 @@ class get_single_sequence():
         # 2、从i下一张开始判断，如果每行的最小距离小于等于阈值，则置为1
         result_MergeBbox[i][j] = 1
 
-        # 对应flag位置从0置为1
+        # 自身bbox对应flag位置从0置为1
         if flag[i][j] == 1:
             print('合并出错1')
         else:
@@ -188,11 +188,11 @@ class get_single_sequence():
                 index = distance[i_2_MergeBbox].index(min(distance[i_2_MergeBbox]))  # 距离<=阈值的横轴下标值
                 result_MergeBbox[i_2_MergeBbox][index] = 1
 
-                # 对应flag位置从0置为1
-                if flag[i_2_MergeBbox][index] == 1:
-                    print('合并出错2')
-                else:
-                    flag[i_2_MergeBbox][index] == 1
+                # # 对应flag位置从0置为1
+                # if flag[i_2_MergeBbox][index] == 1:
+                #     print('合并出错2')
+                # else:
+                #     flag[i_2_MergeBbox][index] == 1
 
         return result_MergeBbox, flag
 
