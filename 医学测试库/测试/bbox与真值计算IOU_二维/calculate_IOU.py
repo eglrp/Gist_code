@@ -71,7 +71,7 @@ def calculate():
     """
     bbox_str = load_txt(txt_dir)
     node_csv = load_csv(csv_dir)
-    PA, sum, total = 1, 0, 0
+    PA, sum, total = 0, 0, 0
     print('start calculate IOU\nnow is PA1')
     for line in range(len(node_csv)):
         if node_csv.PA[line] != PA:
@@ -80,10 +80,10 @@ def calculate():
         # 获取真值一行，即一个淋巴结的bbox list
         csv_bbox_list = csv_2_bbox(node_csv.x[line], node_csv.y[line], node_csv.length[line])
         # 统计所有淋巴结出现的帧数，即所有的真值
-        total += (node_csv.disappear[line] - node_csv.appear[line] + 1)
+        total += (node_csv.disappear[line] - node_csv.appear[line]+1   -2)
         # 在对应帧，预测的bbox和真值之间的IOU
-        for i in range(node_csv.appear[line] - 1, node_csv.disappear[line]):
-            bbox_line_list = bbox_str_to_bbox_list(bbox_str[PA - 1][i])
+        for i in range(node_csv.appear[line] +1, node_csv.disappear[line]+1  -1):
+            bbox_line_list = bbox_str_to_bbox_list(bbox_str[PA ][i])
             # 利用该类计算所有符合条件的IOU的累加
             sum += Judge_Much_IOU.judge_much_IOU(bbox_line_list, csv_bbox_list)
             # print(" total: ", total, " sum: ", sum, " PA: ", PA - 1, " frame: ", i)
