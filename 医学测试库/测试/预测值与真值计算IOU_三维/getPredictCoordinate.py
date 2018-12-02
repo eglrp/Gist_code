@@ -27,7 +27,7 @@ class getPredictCoordinate():
         :param txt_dir: txt文件路径
         :return: 按病人分开的列表
         """
-        with open(self.bounding_box_dir, 'r', encoding='UTF-8-sig') as bbox_txt:
+        with open(self.bounding_box_dir, 'r') as bbox_txt:
             bbox_list = bbox_txt.readlines()
         bbox_list.pop(0) # 去掉标题头
         pa_divide_list, temp = [], 0

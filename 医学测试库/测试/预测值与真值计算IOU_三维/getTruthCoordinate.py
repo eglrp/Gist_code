@@ -57,7 +57,7 @@ class getTruthCoordinate():
                     mark[ii][4]), int(mark[ii][5])
                 x_min, x_max = int(x - longest_in_xy / 2) - 1, int(x + longest_in_xy / 2) + 1
                 y_min, y_max = int(y - longest_in_xy / 2) - 1, int(y + longest_in_xy / 2) + 1
-                z_min, z_max = begin - 1, end - 1  # 标记信息从1开始，而dcm下标从0开始
+                z_min, z_max = begin, end
 
                 mark_coordinate.append(np.array([x_min, y_min, z_min, x_max, y_max, z_max]))
             mark_coordinate_all.append(mark_coordinate)
