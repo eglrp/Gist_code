@@ -26,7 +26,7 @@ class Judge_Much_IOU():
             inter_h = abs(lu_y_inter - rd_y_inter)
             inter_square = inter_w * inter_h
             union_square = (one_w * one_h) + (two_w * two_h) - inter_square
-            calcIOU = inter_square / union_square
+            calcIOU = inter_square / (two_w * two_h)
 
         else:
             calcIOU = 0
@@ -53,7 +53,7 @@ class Judge_Much_IOU():
             # 计算IOU
             result = Judge_Much_IOU.calcIOU(one_x, one_y, one_w, one_h, two_x, two_y, two_w, two_h)
 
-            if result > 0.9:
+            if result > 0.95:
                 # 这里设置阈值
                 return 1
         return 0  # 表示该帧没有与真值相交的bbox
