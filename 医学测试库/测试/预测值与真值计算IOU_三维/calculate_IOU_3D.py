@@ -14,20 +14,20 @@ def test():
     # 得到分组的list（ 真值3D块坐标）
     truth_3D = getTruthCoordinate().get_3d_coordinate()
 
-    # # 分序列，得到召回率均值(两组序列必须相同)
-    # value = getRecall(predict_3D,truth_3D).gruop_cal()
-    # print(value)
+    # 分序列，得到召回率均值(两组序列必须相同)
+    value = getRecall(predict_3D,truth_3D).gruop_cal()
+    print(value)
 
-    # 制作数据集
-
-    # 保存 预测3D块 对应标签
-    # 标准 : 当预测3D块 与真值 立体IOU>0.5，则认定为1
-    predict_label = getPredictLabel(predict_3D, truth_3D).gruop_cal()
-
-    predict_info=[predict_3D,predict_label]
-    # 保存 3D坐标
-    np.save('all_predict_info.npy', predict_info)
-    np.save('all_truth_3d_coordinate.npy', truth_3D)
+    # # 制作数据集
+    #
+    # # 保存 预测3D块 对应标签
+    # # 标准 : 当预测3D块 与真值 立体IOU>0.5，则认定为1
+    # predict_label = getPredictLabel(predict_3D, truth_3D).gruop_cal()
+    #
+    # predict_info=[predict_3D,predict_label]
+    # # 保存 3D坐标
+    # np.save('all_predict_info.npy', predict_info)
+    # np.save('all_truth_3d_coordinate.npy', truth_3D)
 
 
 
