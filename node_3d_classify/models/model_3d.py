@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch as t
-
+from utils.config import opt
 class Net_3D(nn.Module):
     '''
     天池冠军的3D分类网络
@@ -10,7 +10,7 @@ class Net_3D(nn.Module):
         super(Net_3D, self).__init__()
 
         # 特征层
-        self.features = nn.Sequential(  # 未加激活和BN
+        self.features = nn.Sequential(  # 未加BN
             t.nn.Conv3d(in_channels=1, out_channels=32, kernel_size=(3, 3, 3)),
             t.nn.ReLU(),
             t.nn.Conv3d(in_channels=32, out_channels=32, kernel_size=(3, 3, 3)),
@@ -44,6 +44,16 @@ class Net_3D(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
+
+        if opt.block_max_pooling:
+            # 全3D块  最大池化
+            x = x.view(x.size(0),x.size(1),-1)
+            x = t.max(x, dim=2)  # 在指定维度求最大值
+        else:
+            # 全3D块 平均池化
+            x = x.view(x.size(0),x.size(1),-1)
+            x = t.mean(x, dim=2)  # 在指定维度求均值
+
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         # 是否接softmax
@@ -51,8 +61,8 @@ class Net_3D(nn.Module):
 
 
 
-if __name__ == '__main__':
-    model=Net_3D()
-    input = t.randn(1, 1, 20, 36, 36)  #1 batch size    1  输入通道     26，40,40为一个通道的样本
-    output=model(input)
-    print(output.size())
+# if __name__ == '__main__':
+#     model=Net_3D()
+#     input = t.randn(1, 1, 20, 36, 36)  #1 batch size    1  输入通道     26，40,40为一个通道的样本
+#     output=model(input)
+#     print(output.size())
