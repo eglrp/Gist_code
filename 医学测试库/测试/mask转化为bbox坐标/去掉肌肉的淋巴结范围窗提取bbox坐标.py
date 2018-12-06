@@ -72,11 +72,11 @@ save_test_dir = '/home/bobo/data/test/test006/'
 
 bbox_txt = 'bounding_box.txt'
 
-expand_len = 15  # 以轮廓为中心， 每层的bbox 至少长宽为10 （将长宽不足10的 补到10x10）
+expand_len = 20  # 以轮廓为中心， 每层的bbox 至少长宽为10 （将长宽不足10的 补到10x10）
 
 # 最小外接圆直径以内的轮廓 转为 bbox  半径范围
 min_radius = 0
-max_radius = 30
+max_radius = 20
 
 #######################################################################
 
@@ -162,7 +162,7 @@ for i in range(len(dcm_path)):
             #     temp = (y_max + y_min) / 2
             #     y_min = temp - expand_len / 2
             #     y_max = temp + expand_len / 2
-            x_min = x_min -  expand_len / 2
+            x_min = x_min - expand_len / 2
             y_min = y_min - expand_len / 2
             x_max = x_max + expand_len / 2
             y_max = y_max + expand_len / 2
