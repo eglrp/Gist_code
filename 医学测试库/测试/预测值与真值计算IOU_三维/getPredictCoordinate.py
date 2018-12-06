@@ -179,7 +179,7 @@ class get_single_sequence():
         if flag[i][j] == 1:
             print('合并出错1')
         else:
-            flag[i][j] == 1
+            flag[i][j] = 1
 
         for i_2_MergeBbox in range(i + 1, len(distance)):  # 下标值  从i+1开始
             if min(distance[i_2_MergeBbox]) > distance_threshold:
@@ -192,7 +192,7 @@ class get_single_sequence():
                 if flag[i_2_MergeBbox][index] == 1:
                     print('合并出错2')
                 else:
-                    flag[i_2_MergeBbox][index] == 1
+                    flag[i_2_MergeBbox][index] = 1
 
         return result_MergeBbox, flag
 
