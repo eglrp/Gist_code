@@ -1,6 +1,5 @@
 # coding=utf-8
 class Judge_Much_IOU():
-    # 现在通过计算iou的方法，来切出有瑕疵里面的无瑕疵区域
     @staticmethod
     def calcIOU(one_x, one_y, one_w, one_h, two_x, two_y, two_w, two_h):
         """
@@ -27,10 +26,8 @@ class Judge_Much_IOU():
             inter_square = inter_w * inter_h
             union_square = (one_w * one_h) + (two_w * two_h) - inter_square
             calcIOU = inter_square / (two_w * two_h)
-
         else:
             calcIOU = 0
-
         return calcIOU
 
     @staticmethod
@@ -42,6 +39,7 @@ class Judge_Much_IOU():
         :return: 匹配返回1，不匹配返回0
         """
         xmin, ymin, xmax, ymax = this_box_list
+        xmin, ymin, xmax, ymax = int(xmin), int(ymin), int(xmax), int(ymax)
         # 计算真值bbox中心及宽高
         two_x, two_y, two_w, two_h = xmin + (xmax - xmin) / 2, ymin + (ymax - ymin) / 2, xmax - xmin, ymax - ymin
         for onelist in box_list:
@@ -52,9 +50,8 @@ class Judge_Much_IOU():
                     ymax_ - ymin_) / 2, xmax_ - xmin_, ymax_ - ymin_
             # 计算IOU
             result = Judge_Much_IOU.calcIOU(one_x, one_y, one_w, one_h, two_x, two_y, two_w, two_h)
-
-            if result > 0.95:
-                # 这里设置阈值
+            if result > 0.8:
+                # 这里设置阈值，现在为若有相交，则返回1
                 return 1
         return 0  # 表示该帧没有与真值相交的bbox
 
