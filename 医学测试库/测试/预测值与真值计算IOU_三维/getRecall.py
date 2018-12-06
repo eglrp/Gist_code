@@ -67,8 +67,8 @@ class getRecall():
                 overlap_area_list.append(overlap_area)
 
         Inter_AB = sum(overlap_area_list)  # 交集体积
-        Union_AB =  A_volume               # A_volume 真值体积
-
+        # Union_AB =  A_volume+B_volume- Inter_AB
+        Union_AB = A_volume  # A_volume 真值体积
         return Inter_AB / (Union_AB + 0.0001)   # 防止 除数为0
 
 

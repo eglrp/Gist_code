@@ -16,7 +16,7 @@ class getTruthCoordinate():
 
         result = []
         for single_list in group_list:
-            # 真值 记录不连续，则转为连续
+            # 真值 记录若不连续，则转为连续
             single_list=self.transform(single_list)
 
             result.append(get_single_sequence(single_list).get_3d())

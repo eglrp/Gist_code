@@ -15,6 +15,8 @@ class getPredictCoordinate():
 
         result=[]
         for single_list in group_list:
+            # 真值 记录若不连续，则转为连续
+            single_list = self.transform(single_list)
             result.append(get_single_sequence(single_list).get_3d())
 
         return result
@@ -40,6 +42,29 @@ class getPredictCoordinate():
                 pa_divide_list.append(bbox_list[temp:i])
                 temp = i + 1
         return pa_divide_list
+
+    def transform(self, single_list):
+        '''
+        真值 记录不连续，则转为连续
+        无记录时则用  下标号，0,0,0,0 填充
+        '''
+        result = []
+        # 取出所有序号
+        all_index = []
+        for i in range(len(single_list)):
+            all_index.append(int(single_list[i].split(',')[0]))
+
+        max_index = int(single_list[-1].split(',')[0])
+        for i in range(max_index + 1):
+            # 存在该条记录，则写入
+            if i in all_index:
+                # 得到all_index中值为i 对应的下标值
+                result.append(single_list[all_index.index(i)])
+
+            # 无记录，则填充
+            else:
+                result.append(str(i) + ',0,0,0,0,')
+        return result
 
 class get_single_sequence():
     def __init__(self,single_list):
@@ -87,7 +112,7 @@ class get_single_sequence():
                     merge_result, flag = self.MergeBbox(i, j, distance, opt.distance_threshold, flag)
 
                     # 将合并结果转化为3D坐标
-                    node_3d,info= self.transform(merge_result, coordinate_list_grouping)
+                    node_3d,info = self.transform(merge_result, coordinate_list_grouping)
                     if 'false' in info:
                         # 一个bbox无法在3D上合并,过滤掉
                         pass
@@ -140,7 +165,7 @@ class get_single_sequence():
             temp_Calculated = []
             for j_i_coordinate_no_use in i_coordinate_no_use:
 
-                if j_i_coordinate_no_use == [0, 0, 0, 0]:
+                if sum(j_i_coordinate_no_use) == 0 or np.sum(current_bbox) == 0:
                     # 标明该坐标已被使用
                     temp_Calculated.append(float('inf'))
                 else:
