@@ -9,8 +9,6 @@ import Augmentor
 import os
 import random
 import cv2
-
-
 def get_dcm_dir():
     # 得到所有dcm路径
     dcm_list = gb.glob(opt.dataset + "/dcm/*/*.dcm")
@@ -121,17 +119,20 @@ def transform():
     array_img = gb.glob(opt.train_tmp_path + '/*/output')
     array_img.sort()
 
-    for single_array_img in array_img:
+    for i in range(len(array_img)):
         # 遍历一个output文件夹
-        array_img = gb.glob(single_array_img + '/*origin*.jpg')
-        array_img.sort()
-        print()
+
         # img和mask 后面哈希值一致
+        array_origin = gb.glob(array_img[i] + '/*origin*.jpg')
+        array_origin.sort()
 
+        array_groundtruth = gb.glob(array_img[i] + '/*groundtruth*.jpg')
+        array_groundtruth.sort()
 
-
-
-
+        # 保存
+        for j in range(len(array_origin)):
+            cv2.imwrite(opt.train_result_path + '/'+str(i)+'_'+str(j) + '_origin.jpg', cv2.imread(array_origin[j], cv2.IMREAD_GRAYSCALE))
+            cv2.imwrite(opt.mask_result_path + '/' + str(i) + '_' + str(j) + '_groundtruth.jpg',cv2.imread(array_groundtruth[j], cv2.IMREAD_GRAYSCALE))
 
 def test():
     ###############################################
