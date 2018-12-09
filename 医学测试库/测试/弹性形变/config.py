@@ -13,7 +13,8 @@ class DefaultConfig():
     train_result_path = '/home/bobo/data/test/test14/img'
     mask_result_path = '/home/bobo/data/test/test14/mask'
 
-    WL_abdomen, WW_abdomen = 60, 400
+    WL_abdoment, WW_abdoment = 40, 350  # 腹窗的窗宽 窗位
+    WL_extract, WW_extract = -360, 446  # 提取轮廓的窗宽 窗位
 
 
 # 初始化该类的一个对象

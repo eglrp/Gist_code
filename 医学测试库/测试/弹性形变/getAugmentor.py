@@ -34,6 +34,46 @@ def load_abdomen_img(dcm_dir):
     # 下界0，上界255
     return np.clip(img_abdomen, 0, 255)
 
+def Pretreatment(dcm_dir):
+    '''
+    仅保留中间连通区域的腹窗图像
+    '''
+    # 读取dcm
+    dcm = dicom.read_file(dcm_dir)
+    img_origin = dcm.pixel_array * dcm.RescaleSlope + dcm.RescaleIntercept
+
+    # 拿到 提取轮廓的窗，并规范化
+    img_extract = (img_origin - (opt.WL_extract - opt.WW_extract / 2)) / opt.WW_extract * 255  # 规范化到0-255
+    # 下界0，上界255
+    img_extract = np.clip(img_extract, 0, 255)
+
+    dicom_np = np.uint8(img_extract)  # uint8	无符号整数（0 到 255）
+    ret, img = cv2.threshold(dicom_np, 90, 255, cv2.THRESH_BINARY)  # 二值化
+    im2, contours, _ = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)  # 查找轮廓
+
+    # 查找 最中心的轮廓   条件：按照面积从大到小的轮廓中查找，当中心店位于该轮廓内部即为所求
+    area_list = []  # 保存 每个轮廓面积
+    # distance_list=[] # 保存 每个轮廓 是否包含某点
+    for ii in range(len(contours)):
+        area_list.append(cv2.contourArea(contours[ii]))  # 计算面积
+        # # 判断图像中心点（256,256）是否位于该轮廓里面  -1代表在轮廓外面   0代表在轮廓上   1代表在轮廓内
+        # distance_list.append(cv2.pointPolygonTest(contours[ii], (256, 256), False))
+
+    area_index = np.argsort(-np.array(area_list))  # 面积从大到小 的下标值
+    for iii in range(len(area_index)):
+        if 1.0 == cv2.pointPolygonTest(contours[area_index[iii]], (256, 256), False):
+            break  # 找到目标 contours[area_index[iii]]
+
+    # 产生仅有 中心轮廓的 mask  0-1
+    max_contours_mask = np.zeros((img_origin.shape))
+    cv2.fillConvexPoly(max_contours_mask, contours[area_index[iii]], 1)  # 1 为填充值
+
+    # 拿到 腹窗
+    img_abdoment = (img_origin - (opt.WL_abdoment - opt.WW_abdoment / 2)) / opt.WW_abdoment * 255  # 规范化到0-255
+    img_abdoment = np.clip(img_abdoment, 0, 255)
+
+
+    return img_abdoment * max_contours_mask
 
 def save_dcm_mask(dcm_dir, mask):
     '''
@@ -43,8 +83,9 @@ def save_dcm_mask(dcm_dir, mask):
     dcm_len = len(dcm_dir)
     # 保存 腹窗dcm
     for i in range(dcm_len):
-        cv2.imwrite(opt.abdomen_img_dir + '/' + str(100000 + i) + '.jpg', load_abdomen_img(dcm_dir[i]))
-        # pass
+        # 仅保留中间连通区域的腹窗图像
+        cv2.imwrite(opt.abdomen_img_dir + '/' + str(100000 + i) + '.jpg', Pretreatment(dcm_dir[i]))
+
     # 保存 对应mask
     temp_mask = []
     for single_mask in mask:
@@ -54,7 +95,7 @@ def save_dcm_mask(dcm_dir, mask):
     for k in range(dcm_len):
 
         cv2.imwrite(opt.mask_dir + '/' + str(100000 + k) + '.jpg', temp_mask[k]*255)
-        # pass
+
 
 
 def format():
@@ -153,7 +194,7 @@ def test():
     # # 弹性形变
     # doAugment(img_len)
     #
-    # # 总共生成11036张
+    # # 总共生成11365张
 
 
     ##############################################3
