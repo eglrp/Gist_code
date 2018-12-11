@@ -2,6 +2,7 @@
 
 from .unet_parts import *
 
+
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes):
         super(UNet, self).__init__()
@@ -17,14 +18,14 @@ class UNet(nn.Module):
         self.up3 = up(256, 64)
         self.up4 = up(128, 64)
         # 最后一层的卷积核大小为1*1，将64通道的特征图转化为特定深度（分类数量，二分类为2）的结果
-        self.outc = outconv(64, n_classes) #  输出层，n_classes=1 二分类
+        self.outc = outconv(64, n_classes)  # 输出层，n_classes=1 二分类
 
     def forward(self, x):
         x1 = self.inc(x)
         x2 = self.down1(x1)
         x3 = self.down2(x2)
-        x4 = self.down3(x3) # 64x64  维度512
-        x5 = self.down4(x4) # 28x28 维度1024
+        x4 = self.down3(x3)  # 64x64  维度512
+        x5 = self.down4(x4)  # 28x28 维度1024
         x = self.up1(x5, x4)
         x = self.up2(x, x3)
         x = self.up3(x, x2)

@@ -1,5 +1,5 @@
 # sub-parts of the U-Net model
-
+from utils.config import opt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,19 +7,28 @@ import torch.nn.functional as F
 
 class double_conv(nn.Module):
     '''(conv => BN => ReLU) * 2'''
+
     def __init__(self, in_ch, out_ch):
         super(double_conv, self).__init__()
-        self.conv = nn.Sequential(
-            # 每次重复中都有2个卷积层，卷积核大小均为3*3
-            # 原论文中无padding，每次卷积都会丢失图像周围一圈细节，所以论文中左侧feature map需要裁剪再复制
-            # 该仓库 有padding，导致特征图不变
-            nn.Conv2d(in_ch, out_ch, 3, padding=1), #k=3,p=1,s默认=1  导致特征图不变
-            nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_ch, out_ch, 3, padding=1),
-            nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True)
-        )
+        if opt.use_BN:
+            self.conv = nn.Sequential(
+                # 每次重复中都有2个卷积层，卷积核大小均为3*3
+                # 原论文中无padding，每次卷积都会丢失图像周围一圈细节，所以论文中左侧feature map需要裁剪再复制
+                # 该仓库 有padding，导致特征图不变
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),  # k=3,p=1,s默认=1  导致特征图不变
+                nn.BatchNorm2d(out_ch),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.BatchNorm2d(out_ch),
+                nn.ReLU(inplace=True)
+            )
+        else:
+            self.conv = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),  # k=3,p=1,s默认=1  导致特征图不变
+                nn.ReLU(inplace=True),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.ReLU(inplace=True)
+            )
 
     def forward(self, x):
         x = self.conv(x)
@@ -61,11 +70,11 @@ class up(nn.Module):
         # bilinear=False 改为  使用反卷积（论文方法），效果会更好？
 
         # 使用双线性上采样来放大输入
-        if bilinear:  #  batchsize=10   scale=0.3  时  占用9047M
+        if bilinear:  # batchsize=10   scale=0.3  时  占用9047M
             self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
         # （论文方法）二维反卷积层 反卷积层可以理解为输入的数据和卷积核的位置反转的卷积操作. 反卷积有时候也会被翻译成解卷积.
         else:  # 论文方法   batchsize=10   scale=0.3  时 占用9040M
-            self.up = nn.ConvTranspose2d(in_ch//2, in_ch//2, 2, stride=2)  # k=2,s=2的反卷积，尺寸将扩大两倍
+            self.up = nn.ConvTranspose2d(in_ch // 2, in_ch // 2, 2, stride=2)  # k=2,s=2的反卷积，尺寸将扩大两倍
 
         self.conv = double_conv(in_ch, out_ch)
 

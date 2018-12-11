@@ -1,6 +1,7 @@
 import numpy as np
 import pydensecrf.densecrf as dcrf
 
+
 def dense_crf(img, output_probs):
     # 条件随机场(CRF)  CRF的全称是Conditional Random Field
 
